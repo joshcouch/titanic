@@ -14,7 +14,7 @@ train_csv_path = "C:/Users/joshc/OneDrive/Documents/01 Trying too hard/Machine L
 final_test_csv_path = "C:/Users/joshc/OneDrive/Documents/01 Trying too hard/Machine Learning and AI/Kaggle/titanic/Datasets/test.csv"
 
 # Features used
-features = ['Survived','Cherbourg','Queenstown']
+features = ['Survived','Child','Binary Sex']
 
 # Import and prepare data
 train_data_df = pd.read_csv(train_csv_path)

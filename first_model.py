@@ -8,7 +8,7 @@ train_csv_path = "C:/Users/joshc/OneDrive/Documents/01 Trying too hard/Machine L
 summary_stats_path = "C:/Users/joshc/OneDrive/Documents/01 Trying too hard/Machine Learning and AI/Kaggle/titanic/Datasets/summary stats.txt"
 final_test_csv_path = "C:/Users/joshc/OneDrive/Documents/01 Trying too hard/Machine Learning and AI/Kaggle/titanic/Datasets/test.csv"
 
-analyse_data.main(train_csv_path, summary_stats_path)
+data_summary.main(train_csv_path, summary_stats_path)
 
 X_train, y_train = prep_data.train_data_torch
 X_test, y_test = prep_data.test_data_torch
