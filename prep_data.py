@@ -14,17 +14,16 @@ train_csv_path = "C:/Users/joshc/OneDrive/Documents/01 Trying too hard/Machine L
 final_test_csv_path = "C:/Users/joshc/OneDrive/Documents/01 Trying too hard/Machine Learning and AI/Kaggle/titanic/Datasets/test.csv"
 
 # Features used
-features = ['Survived','Child','Binary Sex']
-
-# Import and prepare data
-train_data_df = pd.read_csv(train_csv_path)
+features = ['Survived','Child']
 
 def sex_to_binary(df):
     df['Binary Sex'] = df['Sex'] == 'male'
     df['Binary Sex'] = df['Binary Sex'].astype(int)
     return df
 
-def categorise_age(df):
+def categorise_age(df, remove_nan = False):
+    if remove_nan:
+        df = df.dropna(subset = ['Age'])
     df['Child'] = df['Age'] < 15
     df['Child'] = df['Child'].astype(int)
     df['Teen'] = df['Age'] < 18
@@ -53,34 +52,37 @@ def clean_df(df):
     df = categorise_embarkation_port(df)
     return df
 
+def main():
+    train_data_df = pd.read_csv(train_csv_path)
+    train_data_df = clean_df(train_data_df)
+    train_data_np = train_data_df[features].to_numpy()
 
+    X, y = train_data_np[:,1:], train_data_np[:,0]
 
-train_data_df = clean_df(train_data_df)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1234)
 
-train_data_np = train_data_df[features].to_numpy()
+    # scale features
+    sc = StandardScaler()
+    X_train = sc.fit_transform(X_train)
+    X_test = sc.transform(X_test)
 
-X, y = train_data_np[:,1:], train_data_np[:,0]
+    # remove NaN
+    indices_of_not_nan = ~np.isnan(X_train).any(axis=1)
+    X_train = X_train[indices_of_not_nan]
+    y_train = y_train[indices_of_not_nan]
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1234)
+    X_train = torch.from_numpy(X_train.astype(np.float32))
+    y_train = torch.from_numpy(y_train.astype(np.float32))
+    X_test = torch.from_numpy(X_test.astype(np.float32))
+    y_test = torch.from_numpy(y_test.astype(np.float32))
 
-# scale features
-sc = StandardScaler()
-X_train = sc.fit_transform(X_train)
-X_test = sc.transform(X_test)
+    y_train = y_train.view(y_train.shape[0], 1)
+    y_test = y_test.view(y_test.shape[0], 1)
 
-# remove NaN
-indices_of_not_nan = ~np.isnan(X_train).any(axis=1)
-X_train = X_train[indices_of_not_nan]
-y_train = y_train[indices_of_not_nan]
+    train_data_torch = X_train, y_train
+    test_data_torch = X_test, y_test
+    
+    return train_data_torch, test_data_torch
 
-
-X_train = torch.from_numpy(X_train.astype(np.float32))
-y_train = torch.from_numpy(y_train.astype(np.float32))
-X_test = torch.from_numpy(X_test.astype(np.float32))
-y_test = torch.from_numpy(y_test.astype(np.float32))
-
-y_train = y_train.view(y_train.shape[0], 1)
-y_test = y_test.view(y_test.shape[0], 1)
-
-train_data_torch = X_train, y_train
-test_data_torch = X_test, y_test
+if __name__ == '__main__':
+    main()

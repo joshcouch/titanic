@@ -10,8 +10,8 @@ final_test_csv_path = "C:/Users/joshc/OneDrive/Documents/01 Trying too hard/Mach
 
 data_summary.main(train_csv_path, summary_stats_path)
 
-X_train, y_train = prep_data.train_data_torch
-X_test, y_test = prep_data.test_data_torch
+(X_train, y_train), (X_test, y_test) = prep_data.main()
+print(len(X_train))
 
 n_samples, n_features = X_train.shape
 

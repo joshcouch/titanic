@@ -78,3 +78,9 @@ features = ['Survived','Pclass','Child','Binary Sex'] --> accuracy = 0.8268
 categorised port of embarkation
 features = ['Survived','Cherbourg','Queenstown']
 accuracy = 0.6201
+
+1.1.9
+features = ['Survived','Cherbourg','Queenstown','Child','Binary Sex','Parch','SibSp','Pclass']
+accuracy = 0.6201
+
+Need to interrogate data more to find better features
