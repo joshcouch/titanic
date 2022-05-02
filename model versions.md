@@ -84,3 +84,7 @@ features = ['Survived','Cherbourg','Queenstown','Child','Binary Sex','Parch','Si
 accuracy = 0.6201
 
 Need to interrogate data more to find better features
+
+1.1.10
+removed nan ages
+accuracy = 0.5664

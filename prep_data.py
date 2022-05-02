@@ -14,7 +14,7 @@ train_csv_path = "C:/Users/joshc/OneDrive/Documents/01 Trying too hard/Machine L
 final_test_csv_path = "C:/Users/joshc/OneDrive/Documents/01 Trying too hard/Machine Learning and AI/Kaggle/titanic/Datasets/test.csv"
 
 # Features used
-features = ['Survived','Child']
+features = ['Survived','Bucket Age']
 
 def sex_to_binary(df):
     df['Binary Sex'] = df['Sex'] == 'male'
@@ -27,9 +27,10 @@ def categorise_age(df, remove_nan = False):
     df['Child'] = df['Age'] < 15
     df['Child'] = df['Child'].astype(int)
     df['Teen'] = df['Age'] < 18
-    df['Teen'] = df['Teen'].astype(int) - df['Child']
+    df['Teen'] = df['Teen'].astype(int)
     df['Young Adult'] = df['Age'] <= 30
-    df['Young Adult'] = df['Young Adult'].astype(int) - df['Teen'] - df['Child']
+    df['Young Adult'] = df['Young Adult'].astype(int)
+    df['Bucket Age'] = df['Child'] + df['Teen'] + df['Young Adult']
     return df
 
 def square_Pclass(df):
