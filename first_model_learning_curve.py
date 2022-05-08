@@ -1,23 +1,25 @@
-import numpy as np
 import torch
 import torch.nn as nn
 import data_summary
 import prep_data_2
 from matplotlib import pyplot as plt
 from torch.utils.tensorboard import SummaryWriter
-#writer = SummaryWriter()
+writer = SummaryWriter()
 
 # Define Paths
 train_csv_path = "C:/Users/joshc/OneDrive/Documents/01 Trying too hard/Machine Learning and AI/Kaggle/titanic/Datasets/train.csv"
 summary_stats_path = "C:/Users/joshc/OneDrive/Documents/01 Trying too hard/Machine Learning and AI/Kaggle/titanic/Datasets/summary stats.txt"
 final_test_csv_path = "C:/Users/joshc/OneDrive/Documents/01 Trying too hard/Machine Learning and AI/Kaggle/titanic/Datasets/test.csv"
 
-data_summary.main(train_csv_path, summary_stats_path)
-
-def train_and_test(test_size=0.2, random_state=12):
-    (X_train, y_train), (X_test, y_test) = prep_data_2.main(test_size=0.2, random_state=random_state)
-
-    n_samples, n_features = X_train.shape
+def train_and_test(test_size=0.2, n_samples = None):
+    (X_train, y_train), (X_test, y_test) = prep_data_2.main(test_size=test_size)
+    
+    if not n_samples:
+        n_samples, n_features = X_train.shape
+    else:
+        n_features = X_train.shape[1]
+        X_train = X_train[:n_samples]
+        y_train = y_train[:n_samples]
 
     # model
     class LogisticRegression(nn.Module):
@@ -49,24 +51,28 @@ def train_and_test(test_size=0.2, random_state=12):
         optimizer.zero_grad()
 
 
-        # if (epoch+1) % 1000 == 0:
-        #     print(f'epoch: {epoch+1}, loss = {loss.item():.4f}')
+        if (epoch+1) % 2000 == 0:
+            print(f'epoch: {epoch+1}, loss = {loss.item():.4f}')
 
-    #writer.flush()
-    #writer.close()
-
-    # evaluation
+    # evaluation against train and test set
     with torch.no_grad():
-        y_predicted = model(X_test)
-        y_predicted_cls = y_predicted.round()
-        acc = y_predicted_cls.eq(y_test)
-        acc = acc.sum()/float(y_test.shape[0])
-        print(f'accuracy = {acc:.4f} (random state = {random_state})')
+        y_predicted_train = model(X_train)
+        y_predicted_train_cls = y_predicted_train.round()
+        train_acc = y_predicted_train_cls.eq(y_train)
+        train_acc = train_acc.sum()/float(y_train.shape[0])
+        print(f'[TRAIN] number of samples = {n_samples}, accuracy = {train_acc:.4f}')
+        writer.add_scalar("training accuracy vs num samples", train_acc, n_samples)
+        
+        y_predicted_test = model(X_test)
+        y_predicted_test_cls = y_predicted_test.round()
+        test_acc = y_predicted_test_cls.eq(y_test)
+        test_acc = test_acc.sum()/float(y_test.shape[0])
+        print(f'[TEST] number of samples = {n_samples}, accuracy = {test_acc:.4f}')
+        writer.add_scalar("test accuracy vs num samples", test_acc, n_samples)
     
-    return acc
+    writer.flush()
+    
+for num in range(1,27):
+    train_and_test(n_samples=num**2)
 
-acc_running = []
-for i in range(10):
-    acc_running.append(train_and_test(test_size=0.2, random_state=i))
-
-print(f'mean accuracy over 10 random states = {np.mean(acc_running):.4f}')
+writer.close()
