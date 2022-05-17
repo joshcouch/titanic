@@ -8,11 +8,11 @@ import torch
 features = ["Survived","child", "male", "10^class"]
 
 # Define Paths
-train_csv_path = "C:/Users/joshc/OneDrive/Documents/01 Trying too hard/Machine Learning and AI/Kaggle/titanic/Datasets/train.csv"
+train_csv_path_default = "C:/Users/joshc/OneDrive/Documents/01 Trying too hard/Machine Learning and AI/Kaggle/titanic/Datasets/train.csv"
 final_test_csv_path = "C:/Users/joshc/OneDrive/Documents/01 Trying too hard/Machine Learning and AI/Kaggle/titanic/Datasets/test.csv"
 
 def binary_sex(df):
-    gender_dummies = pd.get_dummies(df["Sex"])
+    gender_dummies = pd.get_dummies(df["Sex"]).astype(int)
     df = pd.concat([df, gender_dummies], axis=1)
     return df
 
@@ -28,8 +28,12 @@ def emphasise_class(df):
     df["10^class"] = 10 ** df["Pclass"]
     return df
 
+def bucket_class(df):
+    df["lower"] = (df["Pclass"] == 3).astype(int)
+    return df
+
 def bucket_port(df):
-    port_dummies = pd.get_dummies(df["Embarked"])
+    port_dummies = pd.get_dummies(df["Embarked"]).astype(int)
     df = pd.concat([df, port_dummies], axis=1)
     return df
 
@@ -79,16 +83,19 @@ def convert_to_torch(final_df, test_size, random_state):
     test_data_torch = X_test, y_test
     return train_data_torch, test_data_torch
     
-def main(test_size, random_state):
+def main(train_csv_path = train_csv_path_default, test_size = 0.2, random_state = 1234):
     train_df = pd.read_csv(train_csv_path)
     train_df = prep_data(train_df)
-    #print(train_df.corr()["Survived"])
-    #print(train_df.head())
-    final_df = train_df[features].copy()
+    final_df = train_df.copy() # [features].copy()
     
-    train_data_torch, test_data_torch = convert_to_torch(final_df, test_size, random_state)
+    #leaving data as df whilst I test out SKLearn random forest
+    #train_data_torch, test_data_torch = convert_to_torch(final_df, test_size, random_state)
     
-    return train_data_torch, test_data_torch
+    if __name__ == '__main__':
+        print(train_df.corr()["Survived"])
+        
+    #return train_data_torch, test_data_torch
+    return final_df
 
 if __name__ == '__main__':
     main(0.2, None)
