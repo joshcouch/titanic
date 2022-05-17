@@ -210,11 +210,26 @@ mean accuracy with 10 splits and 10 repeats = 0.8142, (std = 0.0394)
 mean accuracy with 10 splits and 10 repeats = 0.8163, (std = 0.0395)
 Much less noisy now
 
+1.1.2
+Found the source of noise was the randomforestclassifier, set random_state=1234
+mean accuracy with 10 splits and 10 repeats = 0.8163, (std = 0.0396)
+
+1.2.0
+Let the hyperparameter tuning begin (using RandomizedSearchCV)
+reduced k and n_repeats to 5 and 1
+CONTINUE WITH https://towardsdatascience.com/hyperparameter-tuning-the-random-forest-in-python-using-scikit-learn-28d2aa77dd74
+
+
 ###
 Submitting to kaggle
 second_model_evaluation.py made to do this
 nan in "Fare" feature was replaced using mean values
 score = 0.77511 (3,965th)
+###
+
+Next step is to start looking at examples of failures: (abandoned for now)
+In the incorrect predictions, 19 women were incorrectly predicted to survive and 9 to die
+Survival rate for women correctly predicted = 82%, incorrectly predicted = 32%
 
 NEXT STEPS
 tweak RandomForestClassifier parameters, 
