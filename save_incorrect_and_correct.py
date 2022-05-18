@@ -1,0 +1,10 @@
+final_correct = (y_test == y_pred).reset_index(drop=True)
+final_incorrect = (y_test != y_pred).reset_index(drop=True)
+y_pred_df = pd.DataFrame(y_pred, columns=["y_pred"])
+X_test.reset_index(drop=True, inplace=True)
+y_test.reset_index(drop=True, inplace=True)
+
+correct_df = pd.concat([X_test[final_correct],y_test[final_correct],y_pred_df[final_correct]], axis=1)
+incorrect_df = pd.concat([X_test[final_incorrect],y_test[final_incorrect],y_pred_df[final_incorrect]], axis=1)
+correct_df.to_csv("Datasets/correct.csv")
+incorrect_df.to_csv("Datasets/incorrect.csv")

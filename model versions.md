@@ -214,12 +214,6 @@ Much less noisy now
 Found the source of noise was the randomforestclassifier, set random_state=1234
 mean accuracy with 10 splits and 10 repeats = 0.8163, (std = 0.0396)
 
-1.2.0
-Let the hyperparameter tuning begin (using RandomizedSearchCV)
-reduced k and n_repeats to 5 and 1
-CONTINUE WITH https://towardsdatascience.com/hyperparameter-tuning-the-random-forest-in-python-using-scikit-learn-28d2aa77dd74
-
-
 ###
 Submitting to kaggle
 second_model_evaluation.py made to do this
@@ -227,9 +221,78 @@ nan in "Fare" feature was replaced using mean values
 score = 0.77511 (3,965th)
 ###
 
+1.2.0
+Let the hyperparameter tuning begin (using RandomizedSearchCV)
+CONTINUE WITH https://towardsdatascience.com/hyperparameter-tuning-the-random-forest-in-python-using-scikit-learn-28d2aa77dd74
+Pre random-search: Test Accuracy: 0.8156 (n_estimators=100, random_state=1234)
+
+n_estimators = [int(x) for x in np.linspace(start = 20, stop = 400, num = 10)]
+max_features = ['sqrt']
+max_depth = [int(x) for x in np.linspace(10, 110, num = 11)]
+max_depth.append(None)
+min_samples_split = [2, 5, 10]
+min_samples_leaf = [1, 2, 4]
+bootstrap = [True, False]
+
+clf_random = RandomizedSearchCV(estimator = clf, param_distributions = random_grid, 
+                                n_iter = 200, verbose=1, random_state=1234, 
+                                n_jobs = -1)
+
+Fitting 5 folds for each of 200 candidates, totalling 1000 fits
+{'n_estimators': 315, 'min_samples_split': 10, 'min_samples_leaf': 4, 'max_features': 'sqrt', 'max_depth': None, 'bootstrap': False}
+Best train accuracy: 0.8259
+Test accuracy: 0.8436
+
+Now a GridSearchCV based on the previous
+
+
+GRID SEARCH #1
+n_estimators = [int(x) for x in np.linspace(start = 20, stop = 400, num = 20)]
+max_features = ['sqrt']
+max_depth = [int(x) for x in np.linspace(10, 110, num = 11)]
+max_depth.append(None)
+min_samples_split = [5, 10, 20]
+min_samples_leaf = [2, 4]
+bootstrap = [True]
+
+Fitting 5 folds for each of 1440 candidates, totalling 7200 fits
+{'bootstrap': True, 'max_depth': 70, 'max_features': 'sqrt', 'min_samples_leaf': 2, 'min_samples_split': 5, 'n_estimators': 36}
+Best train accuracy: 0.8273
+Test accuracy: 0.8436
+
+GRID SEARCH #2
+n_estimators = [int(x) for x in np.linspace(start = 20, stop = 80, num = 20)]
+max_depth = [int(x) for x in np.linspace(10, 110, num = 11)]
+max_depth.append(None)
+min_samples_split = [4, 8, 16]
+min_samples_leaf = [1, 2, 4]
+
+Fitting 5 folds for each of 2160 candidates, totalling 10800 fits
+hyper_params_2 = {'max_depth': 20, 'min_samples_leaf': 1, 'min_samples_split': 8, 'n_estimators': 20}
+Best train accuracy: 0.8328
+Test accuracy: 0.8324
+
+Higher train accuracy but lower test accuracy. I'll k-Fold cross validated the two and pick the best (third_model.py)
+hyper_params_1: Mean test accuracy: 82.70%, std = 0.03780837606119187
+hyper_params_2: Mean test accuracy: 81.96%, std = 0.04316061945017869
+Conclusion: hyper_params_2 are likely overfit
+
+all nan were replaced using mean values
+
+###
+Submitting hyper_params_1 to kaggle
+score = 0.77033 (7,254th)
+###
+
+###
+Submitting hyper_params_2 to kaggle
+score = 0.77511 (3,965th) - same as baseline model
+###
+
 Next step is to start looking at examples of failures: (abandoned for now)
 In the incorrect predictions, 19 women were incorrectly predicted to survive and 9 to die
 Survival rate for women correctly predicted = 82%, incorrectly predicted = 32%
+
 
 NEXT STEPS
 tweak RandomForestClassifier parameters, 

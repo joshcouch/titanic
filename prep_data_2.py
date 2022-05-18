@@ -1,3 +1,4 @@
+from typing import final
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
@@ -86,16 +87,15 @@ def convert_to_torch(final_df, test_size, random_state):
 def main(train_csv_path = train_csv_path_default, test_size = 0.2, random_state = 1234):
     train_df = pd.read_csv(train_csv_path)
     train_df = prep_data(train_df)
-    final_df = train_df.copy() # [features].copy()
+    final_df = train_df.select_dtypes(exclude=object).copy()
     
-    #leaving data as df whilst I test out SKLearn random forest
-    #train_data_torch, test_data_torch = convert_to_torch(final_df, test_size, random_state)
+    for column in final_df.columns:
+        final_df[column] = final_df[column].fillna(final_df[column].mean())
     
     if __name__ == '__main__':
         print(train_df.corr()["Survived"])
-        
-    #return train_data_torch, test_data_torch
+
     return final_df
 
 if __name__ == '__main__':
-    main(0.2, None)
+    main(test_size=0.2, random_state=None)
