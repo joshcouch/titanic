@@ -289,14 +289,58 @@ Submitting hyper_params_2 to kaggle
 score = 0.77511 (3,965th) - same as baseline model
 ###
 
-Next step is to start looking at examples of failures: (abandoned for now)
-In the incorrect predictions, 19 women were incorrectly predicted to survive and 9 to die
-Survival rate for women correctly predicted = 82%, incorrectly predicted = 32%
+both hyper_params_1 and _2 were overfit
+
+Trying RandomSearchCV again with full training set. This time following https://machinelearningmastery.com/hyperparameter-optimization-with-random-search-and-grid-search/
+
+# Baseline
+X_features = ['Age', 'Fare', 'female', 'no friends or family', '10^class']
+Mean test accuracy: 82.88%, std = 0.0398
+
+# Random 1
+n_iter = 10 (default)
+search_space["max_features"] = ["sqrt", "log2"]
+search_space["n_estimators"] = np.logspace(1, 3, 20, dtype=int)
+search_space["max_depth"] = np.logspace(0, 1.5, 5, dtype=int)
+Fitting 30 folds for each of 10 candidates, totalling 300 fits
+Best Score: 0.8204244694132334
+Best Hyperparameters: {'n_estimators': 1000, 'max_features': 'log2', 'max_depth': 5}
+
+# Random 2
+n_iter = 10 (default)
+search_space["max_features"] = ["sqrt", "log2"]
+search_space["n_estimators"] = np.linspace(10, 100, 20, dtype=int)
+search_space["max_depth"] = np.linspace(2, 20, 5, dtype=int)
+Fitting 30 folds for each of 10 candidates, totalling 300 fits
+Best Score: 0.8245401581356637
+Best Hyperparameters: {'n_estimators': 52, 'max_features': 'log2', 'max_depth': 6}
+
+# Random 3
+n_iter = 400
+search_space["max_features"] = ["sqrt", "log2"]
+search_space["n_estimators"] = np.linspace(10, 200, 20, dtype=int)
+search_space["max_depth"] = np.linspace(2, 30, 10, dtype=int)
+Fitting 30 folds for each of 400 candidates, totalling 12000 fits
+Best Score: 0.834615064502705
+Best Hyperparameters: {'n_estimators': 80, 'max_features': 'log2', 'max_depth': 8}
+
+# Random 4
+search_space["max_features"] = ["sqrt", "log2"]
+search_space["n_estimators"] = np.linspace(10, 400, 50, dtype=int)
+search_space["max_depth"] = np.linspace(2, 30, 10, dtype=int)
+search_space["min_samples_leaf"] = np.linspace(2, 30, 10, dtype=int)
+Fitting 30 folds for each of 500 candidates, totalling 15000 fits
+Best Score: 0.8327590511860176
+Best Hyperparameters: {'n_estimators': 105, 'min_samples_leaf': 2, 'max_features': 'sqrt', 'max_depth': 26}
+
+
+Next step is to 
 
 
 NEXT STEPS
-tweak RandomForestClassifier parameters, 
+plot hyperparameters vs accuracy to find local optima 
 add regularisation, 
 try pca
-look at failure examples
-
+look at failure examples (abandoned for now)
+In the incorrect predictions, 19 women were incorrectly predicted to survive and 9 to die
+Survival rate for women correctly predicted = 82%, incorrectly predicted = 32%

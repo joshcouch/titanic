@@ -8,7 +8,7 @@ import prep_data_2
 from sklearn.model_selection import RepeatedKFold
 from sklearn.ensemble import RandomForestClassifier
 from sklearn import metrics
-from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import RandomSearchCV, GridSearchCV
 
 # Define Paths
 train_csv_path = "C:/Users/joshc/OneDrive/Documents/01 Trying too hard/Machine Learning and AI/Kaggle/titanic/Datasets/train.csv"
@@ -20,8 +20,9 @@ data_summary.main(train_csv_path, summary_stats_path)
 data_df = prep_data_2.main(train_csv_path=train_csv_path)
 
 y_feature = "Survived"
+X_features = ['Age', 'Fare', 'female', 'no friends or family', '10^class']
 
-X = data_df.iloc[:,2:]
+X = data_df[X_features]
 y = data_df[y_feature]
 
 hyper_params = {'bootstrap': True, 'max_depth': 70, 
