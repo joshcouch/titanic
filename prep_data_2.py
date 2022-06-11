@@ -18,7 +18,7 @@ def binary_sex(df):
     return df
 
 def bucket_age(df):
-    df["Age"].fillna(df["Age"].mean())
+    df["Age"].fillna(df["Age"].median())
     df["child"] = (df["Age"] <= 15).astype(int)
     df["15 - 30"] = ((df["Age"] > 15) & (df["Age"] <= 30)).astype(int)
     df["30 - 50"] = ((df["Age"] > 30) & (df["Age"] <= 50)).astype(int)
@@ -89,8 +89,8 @@ def main(train_csv_path = train_csv_path_default, test_size = 0.2, random_state 
     train_df = prep_data(train_df)
     final_df = train_df.select_dtypes(exclude=object).copy()
     
-    for column in final_df.columns:
-        final_df[column] = final_df[column].fillna(final_df[column].mean())
+    # for column in final_df.columns:
+    #     final_df[column] = final_df[column].fillna(final_df[column].mean())
     
     if __name__ == '__main__':
         print(train_df.corr()["Survived"])
